@@ -19,6 +19,20 @@ module Devise
           key name, type, options
         end
       end
+
+      class Adapter
+        def initialize(klass)
+          @klass = klass
+        end
+
+        def get(id)
+          @klass.find_by_id(id)
+        end
+
+        def find_first(hash)
+          @klass.find(:first, :conditions => hash)
+        end
+      end
     end
   end
 end
@@ -36,6 +50,10 @@ module MongoMapper
         else
           super
         end
+      end
+
+      def to_adapter
+        ::Devise::Orm::MongoMapper::Adapter.new(self)
       end
     end
   end
